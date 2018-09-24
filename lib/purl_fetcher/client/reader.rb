@@ -76,7 +76,6 @@ class PurlFetcher::Client::Reader
         total += data[accessor].length
 
         data[accessor].each do |element|
-          puts element.inspect
           yielder.yield element
         end
 
