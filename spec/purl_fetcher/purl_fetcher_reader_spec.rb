@@ -25,7 +25,7 @@ RSpec.describe PurlFetcher::Client::Reader do
     }
 
     it 'returns objects from the purl-fetcher api' do
-      expect(reader.each.map(&:druid)).to eq ['x', 'y']
+      expect(reader.map { |x| x.druid }).to eq ['x', 'y']
     end
   end
 end

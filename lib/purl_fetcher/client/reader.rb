@@ -1,4 +1,5 @@
 class PurlFetcher::Client::Reader
+  include Enumerable
   attr_reader :input_stream, :settings
 
   def initialize(input_stream, settings = {})
@@ -9,10 +10,12 @@ class PurlFetcher::Client::Reader
   def each
     return to_enum(:each) unless block_given?
 
-    changes(first_modified: first_modified, target: target).each do |change|
+    changes(first_modified: first_modified, target: target).each do |change, meta|
       next unless target.nil? || (change['true_targets'] && change['true_targets'].include?(target))
 
-      yield PurlFetcher::Client::PublicXmlRecord.new(change['druid'].sub('druid:', ''), settings)
+      public_xml = PurlFetcher::Client::PublicXmlRecord.new(change['druid'].sub('druid:', ''), settings)
+
+      yield public_xml, change, meta
     end
   end
 
@@ -76,7 +79,7 @@ class PurlFetcher::Client::Reader
         total += data[accessor].length
 
         data[accessor].each do |element|
-          yielder.yield element
+          yielder.yield element, { 'range' => data['range'] || {} }
         end
 
         page = data['pages']['next_page']

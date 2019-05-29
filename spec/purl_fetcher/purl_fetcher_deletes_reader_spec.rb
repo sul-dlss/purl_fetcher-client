@@ -38,7 +38,7 @@ RSpec.describe PurlFetcher::Client::DeletesReader do
     }
 
     it 'returns objects from the purl-fetcher deletes api and any changed objects that are marked as a false target' do
-      expect(reader.each.map(&:druid)).to eq ['x', 'y', 'z']
+      expect(reader.map { |x| x.druid }).to eq ['x', 'y', 'z']
     end
   end
 end
