@@ -1,10 +1,11 @@
 class PurlFetcher::Client::Reader
   include Enumerable
-  attr_reader :input_stream, :settings
+  attr_reader :input_stream, :settings, :range
 
   def initialize(input_stream, settings = {})
     @settings = settings
     @input_stream = input_stream
+    @range = {}
   end
 
   def each
@@ -15,7 +16,7 @@ class PurlFetcher::Client::Reader
 
       public_xml = PurlFetcher::Client::PublicXmlRecord.new(change['druid'].sub('druid:', ''), settings)
 
-      yield public_xml, change, meta
+      yield public_xml, change, self
     end
   end
 
@@ -75,11 +76,12 @@ class PurlFetcher::Client::Reader
 
       loop do
         data = get(path, { per_page: per_page, page: page }.merge(params))
+        @range = data['range']
 
         total += data[accessor].length
 
         data[accessor].each do |element|
-          yielder.yield element, { 'range' => data['range'] || {} }
+          yielder.yield element, self
         end
 
         page = data['pages']['next_page']
