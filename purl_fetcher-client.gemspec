@@ -23,6 +23,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'http'
   spec.add_dependency 'nokogiri'
   spec.add_dependency 'stanford-mods'
+  spec.add_dependency 'dor-rights-auth'
+  spec.add_dependency 'mods_display'
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"

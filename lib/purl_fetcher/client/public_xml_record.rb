@@ -1,15 +1,28 @@
 require 'nokogiri'
 require 'stanford-mods'
+require 'mods_display'
+require 'dor/rights_auth'
 
 module PurlFetcher::Client
   class PublicXmlRecord
+    include ModsDisplay::ModelExtension
+    include ModsDisplay::ControllerExtension
+
+    mods_xml_source do |model|
+      model.mods.to_s
+    end
+    configure_mods_display do
+    end
+
     attr_reader :druid, :options
 
     def self.fetch(url)
-      if defined?(Manticore)
-        Manticore.get(url).body
+      if defined?(JRUBY_VERSION)
+        response = Manticore.get(url)
+        response.body if response.code == 200
       else
-        HTTP.get(url).body
+        response = HTTP.get(url)
+        response.body if response.status.ok?
       end
     end
 
@@ -42,8 +55,16 @@ module PurlFetcher::Client
       end
     end
 
+    def mods_display
+      @mods_display ||= render_mods_display(self)
+    end
+
     def public_xml
       @public_xml ||= self.class.fetch(purl_base_url + "/#{druid}.xml")
+    end
+
+    def public_xml?
+      !!public_xml
     end
 
     def public_xml_doc
@@ -134,7 +155,7 @@ module PurlFetcher::Client
       return unless thumb
       thumb_druid=thumb.split('/').first # the druid (before the first slash)
       thumb_filename=thumb.split(/[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}[0-9]{4}[\/]/).last # everything after the druid
-      "#{thumb_druid}%2F#{URI.escape(thumb_filename)}"
+      "#{thumb_druid}%2F#{ERB::Util.url_encode(thumb_filename)}"
     end
 
     # get the druids from predicate relationships in rels-ext from public_xml
@@ -146,6 +167,26 @@ module PurlFetcher::Client
       pred_nodes.reject { |n| n.value.empty? }.map do |n|
         n.value.split('druid:').last
       end
+    end
+
+    def druid_tree
+      druid.match(/(..)(...)(..)(....)/).captures.join('/')
+    end
+
+    def rights_xml
+      @rights_xml ||= public_xml_doc.xpath('//rightsMetadata').to_s
+    end
+
+    def rights
+      @rights ||= ::Dor::RightsAuth.parse(rights_xml)
+    end
+
+    def public?
+      rights.world_unrestricted?
+    end
+
+    def stanford_only?
+      rights.stanford_only_unrestricted?
     end
 
     def purl_base_url
