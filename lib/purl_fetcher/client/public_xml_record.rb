@@ -111,13 +111,13 @@ module PurlFetcher::Client
 
      def collections
        @collections ||= predicate_druids('isMemberOfCollection').map do |druid|
-         PublicXmlRecord.new(druid, settings)
+         PublicXmlRecord.new(druid, options)
        end
      end
 
      def constituents
        @constituents ||= predicate_druids('isConstituentOf').map do |druid|
-         PublicXmlRecord.new(druid, settings)
+         PublicXmlRecord.new(druid, options)
        end
      end
 
