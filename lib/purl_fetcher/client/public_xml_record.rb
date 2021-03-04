@@ -148,6 +148,10 @@ module PurlFetcher::Client
       end
     end
 
+    def druid_tree
+      druid.match(/(..)(...)(..)(....)/).captures.join('/')
+    end
+
     def purl_base_url
       options[:purl_url]&.sub(%r{/$}, '') || 'https://purl.stanford.edu'
     end
