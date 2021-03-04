@@ -54,7 +54,7 @@ module PurlFetcher::Client
       @mods ||= if public_xml_doc.xpath('/publicObject/mods:mods', mods: 'http://www.loc.gov/mods/v3').any?
         public_xml_doc.xpath('/publicObject/mods:mods', mods: 'http://www.loc.gov/mods/v3').first
       else
-        self.class.fetch(purl_base_url + "#{druid}.mods")
+        self.class.fetch(purl_base_url + "/#{druid}.mods")
       end
     end
 
@@ -143,7 +143,8 @@ module PurlFetcher::Client
     end
 
     def purl_base_url
-      options[:purl_url] || 'https://purl.stanford.edu'
+      options[:purl_url]&.sub(%r{/$}, '') || 'https://purl.stanford.edu'
+    end
     end
   end
 end
