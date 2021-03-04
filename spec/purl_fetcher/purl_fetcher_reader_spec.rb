@@ -28,4 +28,29 @@ RSpec.describe PurlFetcher::Client::Reader do
       expect(reader.map { |x| x.druid }).to eq ['x', 'y']
     end
   end
+
+  describe('#collection_members') do
+    before do
+      if defined? JRUBY_VERSION
+        expect(Manticore).to receive(:get).with(%r{/collections/druid:xyz/purls}, query: hash_including(page: 1)).and_return(double(body: body))
+      else
+        expect(HTTP).to receive(:get).with(%r{/collections/druid:xyz/purls}, params: hash_including(page: 1)).and_return(double(body: body))
+      end
+    end
+
+    let(:body) do
+      {
+        purls: [
+          { druid: 'x', true_targets: ['Searchworks'] },
+          { druid: 'y', true_targets: ['Searchworks'] },
+          { druid: 'z', true_targets: ['SomethingElse'] }
+        ],
+        pages: {}
+      }.to_json
+    end
+
+    it 'returns collection members' do
+      expect(reader.collection_members('xyz').map { |x| x.druid }).to eq %w[x y z]
+    end
+  end
 end

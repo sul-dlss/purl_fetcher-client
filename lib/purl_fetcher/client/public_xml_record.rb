@@ -54,7 +54,7 @@ module PurlFetcher::Client
       @mods ||= if public_xml_doc.xpath('/publicObject/mods:mods', mods: 'http://www.loc.gov/mods/v3').any?
         public_xml_doc.xpath('/publicObject/mods:mods', mods: 'http://www.loc.gov/mods/v3').first
       else
-        self.class.fetch(purl_base_url + "#{druid}.mods")
+        self.class.fetch(purl_base_url + "/#{druid}.mods")
       end
     end
 
@@ -121,6 +121,12 @@ module PurlFetcher::Client
        end
      end
 
+     def items(&block)
+       return [] unless is_collection
+
+       purl_fetcher_client.collection_members(druid, &block)
+     end
+
      # the thumbnail in publicXML properly URI encoded, including the slash separator
      # @return [String] thumb filename with druid prepended, e.g. oo000oo0001%2Ffilename%20withspace.jp2
     def encoded_thumb
@@ -143,7 +149,18 @@ module PurlFetcher::Client
     end
 
     def purl_base_url
-      options[:purl_url] || 'https://purl.stanford.edu'
+      options[:purl_url]&.sub(%r{/$}, '') || 'https://purl.stanford.edu'
+    end
+
+    def purl_fetcher_api_endpoint
+      options[:purl_fetcher_url] || 'https://purl-fetcher.stanford.edu'
+    end
+
+    def purl_fetcher_client
+      @purl_fetcher_client ||= PurlFetcher::Client::Reader.new(
+        nil,
+        'purl_fetcher.api_endpoint' => purl_fetcher_api_endpoint
+      )
     end
   end
 end
