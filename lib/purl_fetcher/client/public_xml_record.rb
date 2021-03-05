@@ -75,7 +75,14 @@ module PurlFetcher::Client
       @mods ||= if public_xml_doc.xpath('/publicObject/mods:mods', mods: 'http://www.loc.gov/mods/v3').any?
         public_xml_doc.xpath('/publicObject/mods:mods', mods: 'http://www.loc.gov/mods/v3').first
       else
-        self.class.fetch(purl_base_url + "/#{druid}.mods")
+        if defined?(Honeybadger)
+          Honeybadger.notify(
+            'Unable to find MODS in the public xml; falling back to stand-along mods document',
+            context: { druid: druid }
+          )
+        end
+
+        Nokogiri::XML(self.class.fetch(purl_base_url + "/#{druid}.mods"))
       end
     end
 
