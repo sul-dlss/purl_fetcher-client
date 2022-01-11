@@ -5,15 +5,6 @@ require 'dor/rights_auth'
 
 module PurlFetcher::Client
   class PublicXmlRecord
-    include ModsDisplay::ModelExtension
-    include ModsDisplay::ControllerExtension
-
-    mods_xml_source do |model|
-      model.mods.to_s
-    end
-    configure_mods_display do
-    end
-
     attr_reader :druid, :options
 
     def self.fetch(url)
@@ -56,7 +47,7 @@ module PurlFetcher::Client
     end
 
     def mods_display
-      @mods_display ||= render_mods_display(self)
+      @mods_display ||= ModsDisplay::HTML.new(stanford_mods)
     end
 
     def public_xml
