@@ -68,7 +68,7 @@ module PurlFetcher::Client
       else
         if defined?(Honeybadger)
           Honeybadger.notify(
-            'Unable to find MODS in the public xml; falling back to stand-along mods document',
+            'Unable to find MODS in the public xml; falling back to stand-alone mods document',
             context: { druid: druid }
           )
         end
