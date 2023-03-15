@@ -7,13 +7,16 @@ RSpec.describe PurlFetcher::Client::DeletesReader do
   describe '#each' do
     before do
       if defined? JRUBY_VERSION
-        expect(Manticore).to receive(:get).with(%r{/docs/deletes}, query: anything).and_return(double(body: deletes_body))
-        expect(Manticore).to receive(:get).with(%r{/docs/changes}, query: anything).and_return(double(body: changes_body))
+        expect(Manticore).to receive(:get).with(%r{/docs/deletes}, query: anything).and_return(deletes_response)
+        expect(Manticore).to receive(:get).with(%r{/docs/changes}, query: anything).and_return(changes_response)
       else
-        expect(HTTP).to receive(:get).with(%r{/docs/deletes}, params: anything).and_return(double(body: deletes_body))
-        expect(HTTP).to receive(:get).with(%r{/docs/changes}, params: anything).and_return(double(body: changes_body))
+        expect(HTTP).to receive(:get).with(%r{/docs/deletes}, params: anything).and_return(deletes_response)
+        expect(HTTP).to receive(:get).with(%r{/docs/changes}, params: anything).and_return(changes_response)
       end
     end
+
+    let(:deletes_response) { double(body: deletes_body, code: 200) }
+    let(:changes_response) { double(body: changes_body, code: 200) }
 
     let(:deletes_body) {
       {
