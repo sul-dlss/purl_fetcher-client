@@ -53,15 +53,25 @@ class PurlFetcher::Client::Reader
   ##
   # @return [Hash] a parsed JSON hash
   def get(path, params = {})
-    JSON.parse(fetch(settings.fetch('purl_fetcher.api_endpoint', 'https://purl-fetcher.stanford.edu') + path, params))
+    body = fetch(settings.fetch('purl_fetcher.api_endpoint', 'https://purl-fetcher.stanford.edu') + path, params)
+    JSON.parse(body)
   end
 
   def fetch(url, params)
-    if defined?(Manticore)
-      Manticore.get(url, query: params).body
+    response = if defined?(Manticore) # for JRuby
+      Manticore.get(url, query: params) #response.code
     else
-      HTTP.get(url, params: params).body
+      HTTP.get(url, params: params)
     end
+
+    unless response.code.between?(200, 299) # success. Manticore doesn't have response.status.
+      if defined?(Honeybadger)
+        Honeybadger.context({ url: url, params: params, response_code: response.code, body: response.body })
+      end
+      raise PurlFetcher::Client::ResponseError, "Unsuccessful response from purl-fetcher"
+    end
+
+    response.body
   end
 
   ##

@@ -10,6 +10,11 @@ module PurlFetcher
     require 'purl_fetcher/client/public_xml_record'
     require 'purl_fetcher/client/reader'
     require 'purl_fetcher/client/deletes_reader'
-    # Your code goes here...
+    
+    # General error originating in PurlFetcher::Client
+    class Error < StandardError; end
+
+    # Raised when the response from the server is not successful
+    class ResponseError < Error; end
   end
 end
