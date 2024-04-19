@@ -25,7 +25,7 @@ RSpec.describe PurlFetcher::Client::Reader do
     end
 
     it 'returns collection members' do
-      expect(reader.collection_members('xyz').map { |x| x.druid }).to eq %w[x y z]
+      expect(reader.collection_members('xyz').to_a).to eq %w[x y z]
     end
   end
 end

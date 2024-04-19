@@ -11,7 +11,7 @@ class PurlFetcher::Client::Reader
     return to_enum(:collection_members, druid) unless block_given?
 
     paginated_get("/collections/druid:#{druid.sub(/^druid:/, '')}/purls", 'purls').each do |obj, _meta|
-      yield PurlFetcher::Client::PublicXmlRecord.new(obj['druid'].sub('druid:', ''), settings), obj, self
+      yield obj['druid'].delete_prefix('druid:')
     end
   end
 
