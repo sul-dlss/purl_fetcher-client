@@ -3,7 +3,6 @@ require 'http'
 
 module PurlFetcher
   module Client
-    require 'purl_fetcher/client/public_xml_record'
     require 'purl_fetcher/client/reader'
     
     # General error originating in PurlFetcher::Client
