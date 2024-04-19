@@ -1,17 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe PurlFetcher::Client::Reader do
-  subject(:reader) { described_class.new(settings) }
-  let(:settings) { { 'purl_fetcher.target' => 'Searchworks' } }
+  subject(:reader) { described_class.new }
 
   describe '#collection_members' do
     before do
-      expect(HTTP).to receive(:get).with(%r{/collections/druid:xyz/purls}, params: hash_including(page: 1)).and_return(response)
+      stub_request(:get, "https://purl-fetcher.stanford.edu/collections/druid:xyz/purls?params%5Bpage%5D=1&params%5Bper_page%5D=1000").
+        to_return(status: 200, body:, headers: { 'content-type' => 'application/json' })
     end
-
-    let(:response) {
-      instance_double(HTTP::Response, body: body, status: instance_double(HTTP::Response::Status, success?: true))
-    }
 
     let(:body) do
       {
