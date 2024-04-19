@@ -197,7 +197,6 @@ module PurlFetcher::Client
 
     def purl_fetcher_client
       @purl_fetcher_client ||= PurlFetcher::Client::Reader.new(
-        nil,
         'purl_fetcher.api_endpoint' => purl_fetcher_api_endpoint
       )
     end
