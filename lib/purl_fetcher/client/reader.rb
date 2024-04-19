@@ -1,16 +1,19 @@
 class PurlFetcher::Client::Reader
   include Enumerable
-  attr_reader :settings, :range
+  attr_reader :host, :conn, :range
 
-  def initialize(settings = {})
-    @settings = settings
+  def initialize(host: 'https://purl-fetcher.stanford.edu', conn: nil)
+    @host = host
+    @conn = conn || Faraday.new(host) do |f|
+              f.response :json
+            end
     @range = {}
   end
 
   def collection_members(druid)
     return to_enum(:collection_members, druid) unless block_given?
 
-    paginated_get("/collections/druid:#{druid.sub(/^druid:/, '')}/purls", 'purls').each do |obj, _meta|
+    paginated_get("/collections/druid:#{druid.delete_prefix('druid:')}/purls", 'purls').each do |obj, _meta|
       yield obj['druid'].delete_prefix('druid:')
     end
   end
@@ -19,17 +22,12 @@ class PurlFetcher::Client::Reader
 
   ##
   # @return [Hash] a parsed JSON hash
-  def get(path, params = {})
-    body = fetch(settings.fetch('purl_fetcher.api_endpoint', 'https://purl-fetcher.stanford.edu') + path, params)
-    JSON.parse(body)
-  end
+  def fetch(path, params)
+    response = conn.get(path, params: params)
 
-  def fetch(url, params)
-    response = HTTP.get(url, params: params)
-
-    unless response.status.success?
+    unless response.success?
       if defined?(Honeybadger)
-        Honeybadger.context({ url: url, params: params, response_code: response.code, body: response.body })
+        Honeybadger.context({ path:, params:, response_code: response.code, body: response.body })
       end
       raise PurlFetcher::Client::ResponseError, "Unsuccessful response from purl-fetcher"
     end
@@ -56,7 +54,7 @@ class PurlFetcher::Client::Reader
       total    = 0
 
       loop do
-        data = get(path, { per_page: per_page, page: page }.merge(params))
+        data = fetch(path, { per_page: per_page, page: page }.merge(params))
         @range = data['range']
 
         total += data[accessor].length

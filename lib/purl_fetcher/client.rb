@@ -1,5 +1,5 @@
 require "purl_fetcher/client/version"
-require 'http'
+require 'faraday'
 
 module PurlFetcher
   module Client
