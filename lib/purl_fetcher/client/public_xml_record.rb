@@ -1,6 +1,4 @@
 require 'nokogiri'
-require 'stanford-mods'
-require 'mods_display'
 require 'dor/rights_auth'
 
 module PurlFetcher::Client
@@ -33,16 +31,6 @@ module PurlFetcher::Client
 
     def get_value(node)
       (node && node.first) ? node.first.content : nil
-    end
-
-    def stanford_mods
-      @smods_rec ||= Stanford::Mods::Record.new.tap do |smods_rec|
-        smods_rec.from_str(mods.to_s)
-      end
-    end
-
-    def mods_display
-      @mods_display ||= ModsDisplay::HTML.new(stanford_mods)
     end
 
     def public_xml
