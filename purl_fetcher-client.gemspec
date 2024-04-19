@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'nokogiri'
   spec.add_dependency 'stanford-mods'
   spec.add_dependency 'dor-rights-auth'
-  spec.add_dependency 'mods_display', '>= 1.0.0.alpha1'
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
