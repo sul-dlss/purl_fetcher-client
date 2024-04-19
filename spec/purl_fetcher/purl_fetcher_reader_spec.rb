@@ -6,15 +6,11 @@ RSpec.describe PurlFetcher::Client::Reader do
 
   describe '#collection_members' do
     before do
-      if defined? JRUBY_VERSION
-        expect(Manticore).to receive(:get).with(%r{/collections/druid:xyz/purls}, query: hash_including(page: 1)).and_return(response)
-      else
-        expect(HTTP).to receive(:get).with(%r{/collections/druid:xyz/purls}, params: hash_including(page: 1)).and_return(response)
-      end
+      expect(HTTP).to receive(:get).with(%r{/collections/druid:xyz/purls}, params: hash_including(page: 1)).and_return(response)
     end
 
     let(:response) {
-      double(body: body, code: 200)
+      instance_double(HTTP::Response, body: body, status: instance_double(HTTP::Response::Status, success?: true))
     }
 
     let(:body) do
