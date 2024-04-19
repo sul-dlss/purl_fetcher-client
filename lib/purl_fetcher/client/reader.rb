@@ -1,23 +1,10 @@
 class PurlFetcher::Client::Reader
   include Enumerable
-  attr_reader :input_stream, :settings, :range
+  attr_reader :settings, :range
 
-  def initialize(input_stream, settings = {})
+  def initialize(settings = {})
     @settings = settings
-    @input_stream = input_stream
     @range = {}
-  end
-
-  def each
-    return to_enum(:each) unless block_given?
-
-    changes(first_modified: first_modified, target: target).each do |change, meta|
-      next unless target.nil? || (change['true_targets'] && change['true_targets'].include?(target))
-
-      public_xml = PurlFetcher::Client::PublicXmlRecord.new(change['druid'].sub('druid:', ''), settings)
-
-      yield public_xml, change, self
-    end
   end
 
   def collection_members(druid)
@@ -29,26 +16,6 @@ class PurlFetcher::Client::Reader
   end
 
   private
-
-  def first_modified
-    settings['purl_fetcher.first_modified']
-  end
-
-  def target
-    settings['purl_fetcher.target']
-  end
-
-  ##
-  # @return [Enumerator]
-  def changes(params = {})
-    paginated_get('/docs/changes', 'changes', params)
-  end
-
-  ##
-  # @return [Enumerator]
-  def deletes(params = {})
-    paginated_get('/docs/deletes', 'deletes', params)
-  end
 
   ##
   # @return [Hash] a parsed JSON hash
@@ -78,10 +45,10 @@ class PurlFetcher::Client::Reader
   # For performance, and enumberable object is returned.
   #
   # @example operating on each of the results as they come in
-  #   paginated_get('/docs/changes', 'changes').map { |v| puts v.inspect }
+  #   paginated_get('/docs/collections/druid:123', 'purls').map { |v| puts v.inspect }
   #
   # @example getting all of the results and converting to an array
-  #   paginated_get('/docs/changes', 'changes').to_a
+  #   paginated_get('/docs/collections/druid:123', 'purls').to_a
   #
   # @return [Enumerator] an enumberable object
   def paginated_get(path, accessor, options = {})
