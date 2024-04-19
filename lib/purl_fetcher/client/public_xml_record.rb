@@ -8,13 +8,8 @@ module PurlFetcher::Client
     attr_reader :druid, :options
 
     def self.fetch(url)
-      if defined?(JRUBY_VERSION)
-        response = Manticore.get(url)
-        response.body if response.code == 200
-      else
-        response = HTTP.get(url)
-        response.body if response.status.ok?
-      end
+      response = HTTP.get(url)
+      response.body if response.status.ok?
     end
 
     def initialize(druid, options = {})

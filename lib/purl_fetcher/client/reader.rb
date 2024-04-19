@@ -25,13 +25,9 @@ class PurlFetcher::Client::Reader
   end
 
   def fetch(url, params)
-    response = if defined?(Manticore) # for JRuby
-      Manticore.get(url, query: params) #response.code
-    else
-      HTTP.get(url, params: params)
-    end
+    response = HTTP.get(url, params: params)
 
-    unless response.code.between?(200, 299) # success. Manticore doesn't have response.status.
+    unless response.status.success?
       if defined?(Honeybadger)
         Honeybadger.context({ url: url, params: params, response_code: response.code, body: response.body })
       end

@@ -1,9 +1,5 @@
 require "purl_fetcher/client/version"
 require 'http'
-begin
-  require 'manticore' if defined? JRUBY_VERSION
-rescue LoadError
-end
 
 module PurlFetcher
   module Client
