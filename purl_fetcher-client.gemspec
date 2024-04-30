@@ -6,8 +6,8 @@ require "purl_fetcher/client/version"
 Gem::Specification.new do |spec|
   spec.name          = "purl_fetcher-client"
   spec.version       = PurlFetcher::Client::VERSION
-  spec.authors       = ["Chris Beer"]
-  spec.email         = ["cabeer@stanford.edu"]
+  spec.authors       = [ "Chris Beer" ]
+  spec.email         = [ "cabeer@stanford.edu" ]
 
   spec.summary       = 'Traject-compatible reader implementation for streaming data from purl-fetcher'
 
@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = [ "lib" ]
 
   spec.add_dependency 'faraday', '~> 2.1'
 
