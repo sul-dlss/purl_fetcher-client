@@ -2,7 +2,7 @@ class PurlFetcher::Client::Reader
   include Enumerable
   attr_reader :host, :conn, :range
 
-  def initialize(host: 'https://purl-fetcher.stanford.edu', conn: nil)
+  def initialize(host: "https://purl-fetcher.stanford.edu", conn: nil)
     @host = host
     @conn = conn || Faraday.new(host) do |f|
               f.response :json
@@ -13,8 +13,8 @@ class PurlFetcher::Client::Reader
   def collection_members(druid)
     return to_enum(:collection_members, druid) unless block_given?
 
-    paginated_get("/collections/druid:#{druid.delete_prefix('druid:')}/purls", 'purls').each do |obj, _meta|
-      yield obj['druid'].delete_prefix('druid:')
+    paginated_get("/collections/druid:#{druid.delete_prefix('druid:')}/purls", "purls").each do |obj, _meta|
+      yield obj["druid"].delete_prefix("druid:")
     end
   end
 
@@ -55,7 +55,7 @@ class PurlFetcher::Client::Reader
 
       loop do
         data = fetch(path, { per_page: per_page, page: page }.merge(params))
-        @range = data['range']
+        @range = data["range"]
 
         total += data[accessor].length
 
@@ -63,7 +63,7 @@ class PurlFetcher::Client::Reader
           yielder.yield element, self
         end
 
-        page = data['pages']['next_page']
+        page = data["pages"]["next_page"]
 
         break if page.nil? || total >= max
       end

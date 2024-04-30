@@ -12,9 +12,9 @@ RSpec.describe PurlFetcher::Client::Reader do
     let(:body) do
       {
         purls: [
-          { druid: 'x', true_targets: ['Searchworks'] },
-          { druid: 'y', true_targets: ['Searchworks'] },
-          { druid: 'z', true_targets: ['SomethingElse'] }
+          { druid: 'x', true_targets: [ 'Searchworks' ] },
+          { druid: 'y', true_targets: [ 'Searchworks' ] },
+          { druid: 'z', true_targets: [ 'SomethingElse' ] }
         ],
         pages: {}
       }.to_json

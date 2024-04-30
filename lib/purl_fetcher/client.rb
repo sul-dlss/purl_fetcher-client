@@ -1,10 +1,10 @@
 require "purl_fetcher/client/version"
-require 'faraday'
+require "faraday"
 
 module PurlFetcher
   module Client
-    require 'purl_fetcher/client/reader'
-    
+    require "purl_fetcher/client/reader"
+
     # General error originating in PurlFetcher::Client
     class Error < StandardError; end
 
