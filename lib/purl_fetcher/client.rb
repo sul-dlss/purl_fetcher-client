@@ -1,14 +1,89 @@
-require "purl_fetcher/client/version"
+require "active_support"
+require "active_support/core_ext"
 require "faraday"
+require "singleton"
+require "logger"
+
+require "purl_fetcher/client/version"
+require "purl_fetcher/client/reader"
+require "purl_fetcher/client/upload_files"
+require "purl_fetcher/client/direct_upload_request"
+require "purl_fetcher/client/direct_upload_response"
 
 module PurlFetcher
-  module Client
-    require "purl_fetcher/client/reader"
-
+  class Client
     # General error originating in PurlFetcher::Client
     class Error < StandardError; end
 
     # Raised when the response from the server is not successful
     class ResponseError < Error; end
+
+    include Singleton
+    class << self
+      def configure(url:, logger: default_logger)
+        instance.config = Config.new(
+          url: url,
+          logger: logger
+        )
+
+        instance
+      end
+
+      def default_logger
+        Logger.new($stdout)
+      end
+
+      delegate :config, to: :instance
+    end
+
+    attr_accessor :config
+
+    # Send an POST request
+    # @param path [String] the path for the API request
+    # @param body [String] the body of the POST request
+    def post(path:, body:)
+      response = connection.post(path) do |request|
+        request.body = body
+      end
+
+      raise "unexpected response: #{response.status} #{response.body}" unless response.success?
+
+      response.body
+    end
+
+    # Send an PUT request
+    # @param path [String] the path for the API request
+    # @param body [String] the body of the POST request
+    # @param headers [Hash] extra headers to add to the SDR API request
+    def put(path:, body:, headers: {})
+      response = connection.put(path) do |request|
+        request.body = body
+        request.headers = default_headers.merge(headers)
+      end
+
+      raise "unexpected response: #{response.status} #{response.body}" unless response.success?
+
+      response.body
+    end
+
+    private
+
+    Config = Data.define(:url, :logger)
+
+    def connection
+      Faraday.new(
+        url: config.url,
+        headers: default_headers
+      ) do |conn|
+        conn.response :json
+      end
+    end
+
+    def default_headers
+      {
+        accept: "application/json",
+        content_type: "application/json"
+      }
+    end
   end
 end
