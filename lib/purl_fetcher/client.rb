@@ -20,10 +20,11 @@ module PurlFetcher
 
     include Singleton
     class << self
-      def configure(url:, logger: default_logger)
+      def configure(url:, logger: default_logger, token: nil)
         instance.config = Config.new(
           url: url,
-          logger: logger
+          logger: logger,
+          token: token
         )
 
         instance
@@ -68,7 +69,7 @@ module PurlFetcher
 
     private
 
-    Config = Data.define(:url, :logger)
+    Config = Data.define(:url, :logger, :token)
 
     def connection
       Faraday.new(
@@ -83,7 +84,9 @@ module PurlFetcher
       {
         accept: "application/json",
         content_type: "application/json"
-      }
+      }.tap do |headers|
+        headers[:authorization] = "Bearer #{config.token}" if config.token
+      end
     end
   end
 end
