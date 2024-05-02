@@ -25,7 +25,7 @@ Or install it yourself as:
 ### Uploading a file
 
 ```ruby
-PurlFetcher::Client.configure(url:'http://127.0.0.1:3000')
+PurlFetcher::Client.configure(url:'http://127.0.0.1:3000', token: 'abc123')
 
 PurlFetcher::Client::UploadFiles.upload(
   file_metadata: {
