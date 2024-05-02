@@ -22,7 +22,25 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Uploading a file
+
+```ruby
+PurlFetcher::Client.configure(url:'http://127.0.0.1:3000')
+
+PurlFetcher::Client::UploadFiles.upload(
+  file_metadata: {
+    'file1.txt' => PurlFetcher::Client::DirectUploadRequest.new(
+      checksum: '123',
+      byte_size: 10_000,
+      content_type: 'image/tiff',
+      filename: 'image.tiff'
+    )
+  },
+  filepath_map: {
+    'file1.txt' => File.expand_path('Gemfile.lock')
+  }
+)
+```
 
 ## Development
 
