@@ -9,6 +9,7 @@ require "purl_fetcher/client/reader"
 require "purl_fetcher/client/upload_files"
 require "purl_fetcher/client/direct_upload_request"
 require "purl_fetcher/client/direct_upload_response"
+require "purl_fetcher/client/release_tags"
 
 module PurlFetcher
   class Client
@@ -83,10 +84,13 @@ module PurlFetcher
     def default_headers
       {
         accept: "application/json",
-        content_type: "application/json"
-      }.tap do |headers|
-        headers[:authorization] = "Bearer #{config.token}" if config.token
-      end
+        content_type: "application/json",
+        authorization: auth_header
+      }.compact
+    end
+
+    def auth_header
+      "Bearer #{config.token}" if config.token
     end
   end
 end
