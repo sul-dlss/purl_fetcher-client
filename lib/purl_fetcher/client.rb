@@ -10,6 +10,7 @@ require "purl_fetcher/client/upload_files"
 require "purl_fetcher/client/direct_upload_request"
 require "purl_fetcher/client/direct_upload_response"
 require "purl_fetcher/client/release_tags"
+require "purl_fetcher/client/unpublish"
 
 module PurlFetcher
   class Client
@@ -39,6 +40,16 @@ module PurlFetcher
     end
 
     attr_accessor :config
+
+    # Send an DELETE request
+    # @param path [String] the path for the API request
+    def delete(path:)
+      response = connection.delete(path)
+
+      raise "unexpected response: #{response.status} #{response.body}" unless response.success?
+
+      response.body
+    end
 
     # Send an POST request
     # @param path [String] the path for the API request
