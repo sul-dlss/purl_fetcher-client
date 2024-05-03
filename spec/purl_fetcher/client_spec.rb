@@ -5,20 +5,58 @@ RSpec.describe PurlFetcher::Client do
 
   context 'when token is provided' do
     subject(:client) { PurlFetcher::Client.configure(url: 'http://127.0.0.1:3000', token: 'abc123') }
-    before do
-    stub_request(:post, "http://127.0.0.1:3000/test").
-         with(
-           body: "{}",
-           headers: {
-           'Accept'=>'application/json',
-           'Authorization'=>'Bearer abc123',
-           'Content-Type'=>'application/json'
-           }).
-         to_return(status: 200, body: 'OK')
+
+    describe '#post' do
+      before do
+        stub_request(:post, "http://127.0.0.1:3000/test").
+           with(
+             body: "{}",
+             headers: {
+             'Accept'=>'application/json',
+             'Authorization'=>'Bearer abc123',
+             'Content-Type'=>'application/json'
+             }).
+           to_return(status: 200, body: 'OK')
+      end
+
+      it 'adds token to the request' do
+        expect(client.post(path: '/test', body: '{}')).to eq('OK')
+      end
     end
 
-    it 'adds token to the request' do
-      expect(client.post(path: '/test', body: '{}')).to eq('OK')
+    describe '#put' do
+      before do
+        stub_request(:put, "http://127.0.0.1:3000/test").
+           with(
+             body: "{}",
+             headers: {
+             'Accept'=>'application/json',
+             'Authorization'=>'Bearer abc123',
+             'Content-Type'=>'application/json'
+             }).
+           to_return(status: 200, body: 'OK')
+      end
+
+      it 'adds token to the request' do
+        expect(client.put(path: '/test', body: '{}')).to eq('OK')
+      end
+    end
+
+    describe '#delete' do
+      before do
+        stub_request(:delete, "http://127.0.0.1:3000/test").
+           with(
+             headers: {
+             'Accept'=>'application/json',
+             'Authorization'=>'Bearer abc123',
+             'Content-Type'=>'application/json'
+             }).
+           to_return(status: 200, body: 'OK')
+      end
+
+      it 'adds token to the request' do
+        expect(client.delete(path: '/test')).to eq('OK')
+      end
     end
   end
 end
