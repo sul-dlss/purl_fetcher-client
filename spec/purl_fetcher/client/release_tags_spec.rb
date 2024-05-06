@@ -10,8 +10,12 @@ RSpec.describe PurlFetcher::Client::ReleaseTags do
     end
 
     it 'invokes #release on a new instance' do
-      described_class.release(druid:)
-      expect(fake_instance).to have_received(:release).once
+      described_class.release(druid:, index: [ 'Searchworks' ], delete: [ 'Earthworks' ])
+      expect(described_class).to have_received(:new).with(delete: [ "Earthworks" ],
+              druid: "druid:bx911tp9024",
+              index: [ "Searchworks" ])
+
+      expect(fake_instance).to have_received(:release)
     end
   end
 
