@@ -8,7 +8,7 @@ module PurlFetcher
       # @param [Array<String>] index ([]) list of properties to index to
       # @param [Array<String>] delete ([]) list of properties to delete from
       def self.release(druid:, index: [], delete: [])
-        new(index:, delete:).release
+        new(druid:, index:, delete:).release
       end
 
       # @param [String] druid the identifier of the object
