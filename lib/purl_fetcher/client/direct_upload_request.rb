@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module PurlFetcher
   class Client
     # This models the JSON that we send to the server.
