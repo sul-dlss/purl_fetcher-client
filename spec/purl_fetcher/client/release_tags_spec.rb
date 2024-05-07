@@ -37,7 +37,7 @@ RSpec.describe PurlFetcher::Client::ReleaseTags do
     it 'PUTS provided metadata to the release endpoint' do
       release
       expect(PurlFetcher::Client.instance).to have_received(:put).with(
-         body: '{"index":["Searchworks","Earthworks"],"delete":["PURL sitemap"]}',
+         body: '{"actions":{"index":["Searchworks","Earthworks"],"delete":["PURL sitemap"]}}',
          path: "/v1/released/druid:bx911tp9024")
     end
   end
