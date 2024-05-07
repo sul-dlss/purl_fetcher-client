@@ -31,7 +31,7 @@ module PurlFetcher
       attr_reader :druid, :index, :delete
 
       def body
-        { index:, delete: }.to_json
+        { actions: { index:, delete: } }.to_json
       end
 
       def logger
