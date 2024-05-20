@@ -6,6 +6,7 @@ require "logger"
 
 require "purl_fetcher/client/version"
 require "purl_fetcher/client/reader"
+require "purl_fetcher/client/mods"
 require "purl_fetcher/client/upload_files"
 require "purl_fetcher/client/direct_upload_request"
 require "purl_fetcher/client/direct_upload_response"
