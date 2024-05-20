@@ -87,7 +87,8 @@ module PurlFetcher
     def connection
       Faraday.new(
         url: config.url,
-        headers: default_headers
+        headers: default_headers,
+        request: default_request_options
       ) do |conn|
         conn.response :json
       end
@@ -99,6 +100,14 @@ module PurlFetcher
         content_type: "application/json",
         authorization: auth_header
       }.compact
+    end
+
+    def default_request_options
+      # To allow transfer of large files.
+      {
+          read_timeout: 900,
+          timeout: 900
+        }
     end
 
     def auth_header
