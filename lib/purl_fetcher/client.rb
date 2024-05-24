@@ -11,6 +11,7 @@ require "purl_fetcher/client/upload_files"
 require "purl_fetcher/client/direct_upload_request"
 require "purl_fetcher/client/direct_upload_response"
 require "purl_fetcher/client/legacy_publish"
+require "purl_fetcher/client/publish"
 require "purl_fetcher/client/release_tags"
 require "purl_fetcher/client/unpublish"
 
