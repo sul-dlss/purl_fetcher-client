@@ -10,7 +10,7 @@ module PurlFetcher
         new(file_metadata: file_metadata, filepath_map: filepath_map).upload
       end
 
-      # @param [Hash<String,DirectUploadRequest>] file_metadata map of relative filepaths to file metadata
+      # @param [Array<DirectUploadRequest>] file_metadata array of DirectUploadRequests for the files to be uploaded
       # @param [Hash<String,String>] filepath_map map of relative filepaths to absolute filepaths
       def initialize(file_metadata:, filepath_map:)
         @file_metadata = file_metadata
@@ -19,10 +19,10 @@ module PurlFetcher
 
       # @return [Array<DirectUploadResponse>] the responses from the server for the uploads
       def upload
-        file_metadata.map do |filepath, metadata|
-          direct_upload(metadata.to_json).tap do |response|
-            # ActiveStorage modifies the filename provided in response, so setting here with the relative filename
-            response = response.with_filename(filepath)
+        file_metadata.map do |metadata|
+          filepath = metadata.filename
+          # ActiveStorage modifies the filename provided in response, so setting here with the relative filename
+          direct_upload(metadata.to_json).with_filename(filepath).tap do |response|
             upload_file(response)
             logger.info("Upload of #{filepath} complete")
           end

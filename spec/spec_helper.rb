@@ -2,6 +2,8 @@ require "bundler/setup"
 require "purl_fetcher/client"
 require "webmock/rspec"
 require "debug"
+require "cocina/models"
+require "cocina/rspec"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

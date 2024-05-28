@@ -7,3 +7,4 @@ gemspec
 
 gem "rubocop-rails-omakase", require: false, group: [ :development ]
 gem "debug"
+gem "cocina-models"

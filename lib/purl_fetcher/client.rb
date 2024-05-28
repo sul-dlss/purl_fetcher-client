@@ -14,6 +14,7 @@ require "purl_fetcher/client/legacy_publish"
 require "purl_fetcher/client/publish"
 require "purl_fetcher/client/release_tags"
 require "purl_fetcher/client/unpublish"
+require "purl_fetcher/client/publish_shelve"
 
 module PurlFetcher
   class Client
