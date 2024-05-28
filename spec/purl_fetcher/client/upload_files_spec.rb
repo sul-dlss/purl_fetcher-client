@@ -10,7 +10,7 @@ RSpec.describe PurlFetcher::Client::UploadFiles do
 
     it 'invokes #upload on a new instance' do
       described_class.upload(
-        file_metadata: {},
+        file_metadata: [],
         filepath_map: {}
       )
       expect(fake_instance).to have_received(:upload).once
@@ -26,7 +26,7 @@ RSpec.describe PurlFetcher::Client::UploadFiles do
       {
         id: 26,
         key: "f8u88eq34lcn058lkuvqlmgxiqxw",
-        filename: 'file1.txt',
+        filename: 'xfile1.txt',
         metadata: {},
         created_at: "2024-04-30T16:58:53.465Z",
         service_name: "local",
@@ -38,14 +38,14 @@ RSpec.describe PurlFetcher::Client::UploadFiles do
       }
     end
     let(:file_metadata) do
-      {
-        'file1.txt' => PurlFetcher::Client::DirectUploadRequest.new(
+      [
+        PurlFetcher::Client::DirectUploadRequest.new(
           checksum: '123',
           byte_size: 10_000,
           content_type: 'image/tiff',
-          filename: 'image.tiff'
+          filename: 'file1.txt'
         )
-      }
+    ]
     end
     let(:filepath_map) do
       {

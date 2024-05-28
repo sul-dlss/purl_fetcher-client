@@ -4,32 +4,36 @@ module PurlFetcher
   class Client
     # Publish (metadata-only) to the purl cache
     class Publish
-      # @param [Cocina::Models::DRO,Cocina::Models::Collection] cocina the Cocina data object
-      def self.publish(cocina:)
-        new(cocina:).publish
+      def self.publish(...)
+        new(...).publish
       end
 
       # @param [Cocina::Models::DRO,Cocina::Models::Collection] cocina the Cocina data object
-      def initialize(cocina:)
+      # @param [Hash<String,String>] file_uploads map of filenames to signed_ids
+      def initialize(cocina:, file_uploads:)
         @cocina = cocina
+        @file_uploads = file_uploads
       end
 
       def publish
         logger.debug("Starting a publish request for: #{druid}")
-        response = client.post(path:, body:)
+        client.post(path:, body:)
         logger.debug("Publish request complete")
       end
 
       private
 
-      attr_reader :cocina
+      attr_reader :cocina, :file_uploads
 
       def druid
         cocina.externalIdentifier
       end
 
       def body
-        cocina.to_json
+        {
+          object: cocina.to_h,
+          file_uploads: file_uploads
+      }.to_json
       end
 
       def logger

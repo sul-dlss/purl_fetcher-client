@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PurlFetcher::Client::Publish do
-  let(:cocina) { double("Cocina Model", externalIdentifier: "druid:bx911tp9024", to_json: "{}") }
+  let(:cocina) { double("Cocina Model", externalIdentifier: "druid:bx911tp9024", to_h: {}) }
+  let(:file_uploads) { { 'file2.txt' => 'signed_id' } }
 
   describe '.publish' do
     let(:fake_instance) { instance_double(described_class, publish: nil) }
@@ -18,7 +19,7 @@ RSpec.describe PurlFetcher::Client::Publish do
 
   describe '#publish' do
     subject(:publish) do
-      described_class.new(cocina:).publish
+      described_class.new(cocina:, file_uploads:).publish
     end
 
     before do
@@ -31,7 +32,7 @@ RSpec.describe PurlFetcher::Client::Publish do
     it 'POST provided metadata to the publish endpoint' do
       publish
       expect(PurlFetcher::Client.instance).to have_received(:post).with(
-         body: '{}',
+         body: "{\"object\":{},\"file_uploads\":{\"file2.txt\":\"signed_id\"}}",
          path: "/v1/resources")
     end
   end
