@@ -30,6 +30,8 @@ module PurlFetcher
       attr_reader :cocina, :filepath_map
 
       def file_metadata
+        return [] unless cocina.dro?
+
         cocina.structural.contains.flat_map do |fileset|
           fileset.structural.contains.select { |file| filepath_map.include?(file.filename) }.map do |file|
             direct_upload_request_for(file)
