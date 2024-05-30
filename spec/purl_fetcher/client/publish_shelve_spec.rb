@@ -59,7 +59,7 @@ RSpec.describe PurlFetcher::Client::PublishShelve do
     }
   end
 
-  describe '.publish_and_shleve' do
+  describe '.publish_and_shelve' do
     let(:fake_instance) { instance_double(described_class, publish_and_shelve: nil) }
 
     before do
@@ -77,38 +77,63 @@ RSpec.describe PurlFetcher::Client::PublishShelve do
       described_class.new(cocina: cocina, filepath_map: filepath_map).publish_and_shelve
     end
 
-    let(:direct_upload_responses) do
-      [
-        instance_double(PurlFetcher::Client::DirectUploadResponse,
-          filename: 'jt667tw2770_00_0001.tif',
-          signed_id: 'signed_id1'
-        ),
-        instance_double(PurlFetcher::Client::DirectUploadResponse,
-          filename: 'images/jt667tw2770_05_0001.jp2',
-          signed_id: 'signed_id2'
+    context 'when a DRO' do
+      let(:direct_upload_responses) do
+        [
+          instance_double(PurlFetcher::Client::DirectUploadResponse,
+            filename: 'jt667tw2770_00_0001.tif',
+            signed_id: 'signed_id1'
+          ),
+          instance_double(PurlFetcher::Client::DirectUploadResponse,
+            filename: 'images/jt667tw2770_05_0001.jp2',
+            signed_id: 'signed_id2'
+          )
+        ]
+      end
+
+      let(:file_metadata) do
+        [
+          PurlFetcher::Client::DirectUploadRequest.new(checksum: "ppXMxu16nJBbqRfXwoSFTg==", byte_size: 193090740, content_type: "application/octet-stream", filename: "jt667tw2770_00_0001.tif"),
+        PurlFetcher::Client::DirectUploadRequest.new(checksum: "n3QIWqdS3nQE0xy2vMOKVg==", byte_size: 12141770, content_type: "application/octet-stream", filename: "images/jt667tw2770_05_0001.jp2") ]
+      end
+
+      before do
+        PurlFetcher::Client.configure(
+          url: 'https://purl-fetcher.example.edu'
         )
-      ]
+        allow(PurlFetcher::Client::UploadFiles).to receive(:upload).and_return(direct_upload_responses)
+        allow(PurlFetcher::Client::Publish).to receive(:publish)
+      end
+
+      it 'invokes UploadFiles and Publish' do
+        publish_shelve
+
+        expect(PurlFetcher::Client::UploadFiles).to have_received(:upload).with(file_metadata:, filepath_map: filepath_map)
+        expect(PurlFetcher::Client::Publish).to have_received(:publish).with(cocina: cocina, file_uploads: { 'jt667tw2770_00_0001.tif' => 'signed_id1', 'images/jt667tw2770_05_0001.jp2' => 'signed_id2' })
+      end
     end
 
-    let(:file_metadata) do
-      [
-        PurlFetcher::Client::DirectUploadRequest.new(checksum: "ppXMxu16nJBbqRfXwoSFTg==", byte_size: 193090740, content_type: "application/octet-stream", filename: "jt667tw2770_00_0001.tif"),
-      PurlFetcher::Client::DirectUploadRequest.new(checksum: "n3QIWqdS3nQE0xy2vMOKVg==", byte_size: 12141770, content_type: "application/octet-stream", filename: "images/jt667tw2770_05_0001.jp2") ]
-    end
+    context 'when a Collection' do
+      let(:cocina) do
+        build(:collection)
+      end
 
-    before do
-      PurlFetcher::Client.configure(
-        url: 'https://purl-fetcher.example.edu'
-      )
-      allow(PurlFetcher::Client::UploadFiles).to receive(:upload).and_return(direct_upload_responses)
-      allow(PurlFetcher::Client::Publish).to receive(:publish)
-    end
+      let(:filepath_map) { {} }
 
-    it 'invokes UploadFiles and Publish' do
-      publish_shelve
+      before do
+        PurlFetcher::Client.configure(
+          url: 'https://purl-fetcher.example.edu'
+        )
+        allow(PurlFetcher::Client::UploadFiles).to receive(:upload).and_call_original
+        allow(PurlFetcher::Client::Publish).to receive(:publish)
+      end
 
-      expect(PurlFetcher::Client::UploadFiles).to have_received(:upload).with(file_metadata:, filepath_map: filepath_map)
-      expect(PurlFetcher::Client::Publish).to have_received(:publish).with(cocina: cocina, file_uploads: { 'jt667tw2770_00_0001.tif' => 'signed_id1', 'images/jt667tw2770_05_0001.jp2' => 'signed_id2' })
+      it 'invokes UploadFiles and Publish' do
+        publish_shelve
+
+        expect(PurlFetcher::Client::UploadFiles).to have_received(:upload).with(file_metadata: [], filepath_map: {})
+        expect(PurlFetcher::Client::Publish).to have_received(:publish).with(cocina: cocina, file_uploads: {})
+      end
     end
   end
 end
