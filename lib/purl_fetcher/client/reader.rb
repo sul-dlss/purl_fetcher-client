@@ -37,10 +37,10 @@ class PurlFetcher::Client::Reader
     response = conn.get(path, params: params)
 
     unless response.success?
-      if defined?(Honeybadger)
-        Honeybadger.context({ path:, params:, response_code: response.code, body: response.body })
-      end
       raise PurlFetcher::Client::NotFoundResponseError, "Item not found" if response.status == 404
+      if defined?(Honeybadger)
+        Honeybadger.context({ path:, params:, response_code: response.status, body: response.body })
+      end
       raise PurlFetcher::Client::ResponseError, "Unsuccessful response from purl-fetcher"
     end
 
