@@ -11,6 +11,8 @@ class PurlFetcher::Client::Reader
     @range = {}
   end
 
+  # @raise [PurlFetcher::Client::NotFoundResponseError] if item is not found
+  # @raise [PurlFetcher::Client::ResponseError] if the response is not successful
   def collection_members(druid)
     return to_enum(:collection_members, druid) unless block_given?
 
@@ -20,6 +22,8 @@ class PurlFetcher::Client::Reader
   end
 
   # @return [Array<Hash<String,String>>] a list of hashes where the key is a digest and the value is a filepath/filename
+  # @raise [PurlFetcher::Client::NotFoundResponseError] if item is not found
+  # @raise [PurlFetcher::Client::ResponseError] if the response is not successful
   def files_by_digest(druid)
     retrieve_json("/purls/druid:#{druid.delete_prefix('druid:')}", {})
       .fetch("files_by_md5", [])
@@ -36,6 +40,7 @@ class PurlFetcher::Client::Reader
       if defined?(Honeybadger)
         Honeybadger.context({ path:, params:, response_code: response.code, body: response.body })
       end
+      raise PurlFetcher::Client::NotFoundResponseError, "Item not found" if response.status == 404
       raise PurlFetcher::Client::ResponseError, "Unsuccessful response from purl-fetcher"
     end
 

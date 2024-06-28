@@ -60,5 +60,16 @@ RSpec.describe PurlFetcher::Client::Reader do
         expect(reader.files_by_digest('xyz')).to eq([])
       end
     end
+
+    context 'when not found' do
+      before do
+        stub_request(:get, "https://purl-fetcher.stanford.edu/purls/druid:xyz").
+          to_return(status: 404)
+      end
+
+      it 'raises an error' do
+        expect { reader.files_by_digest('xyz') }.to raise_error(PurlFetcher::Client::NotFoundResponseError)
+      end
+    end
   end
 end
