@@ -1,5 +1,6 @@
 class PurlFetcher::Client::Reader
   include Enumerable
+
   attr_reader :host, :conn, :range
 
   def initialize(host: "https://purl-fetcher.stanford.edu", conn: nil)
@@ -18,11 +19,17 @@ class PurlFetcher::Client::Reader
     end
   end
 
+  # @return [Array<Hash<String,String>>] a list of hashes where the key is a digest and the value is a filepath/filename
+  def files_by_digest(druid)
+    retrieve_json("/purls/druid:#{druid.delete_prefix('druid:')}", {})
+      .fetch("files_by_md5", [])
+  end
+
   private
 
   ##
   # @return [Hash] a parsed JSON hash
-  def fetch(path, params)
+  def retrieve_json(path, params)
     response = conn.get(path, params: params)
 
     unless response.success?
@@ -54,7 +61,7 @@ class PurlFetcher::Client::Reader
       total    = 0
 
       loop do
-        data = fetch(path, { per_page: per_page, page: page }.merge(params))
+        data = retrieve_json(path, { per_page: per_page, page: page }.merge(params))
         @range = data["range"]
 
         total += data[accessor].length
