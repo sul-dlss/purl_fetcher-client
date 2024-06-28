@@ -24,6 +24,9 @@ module PurlFetcher
     # Raised when the response from the server is not successful
     class ResponseError < Error; end
 
+    # Raised when the response from the server indicates that the requested item is not found
+    class NotFoundResponseError < ResponseError; end
+
     include Singleton
     class << self
       def configure(url:, logger: default_logger, token: nil)
