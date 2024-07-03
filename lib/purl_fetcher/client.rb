@@ -27,6 +27,9 @@ module PurlFetcher
     # Raised when the response from the server indicates that the requested item is not found
     class NotFoundResponseError < ResponseError; end
 
+    # Raised when the response from the server indicates that the requested item is already deleted
+    class AlreadyDeletedResponseError < ResponseError; end
+
     include Singleton
     class << self
       def configure(url:, logger: default_logger, token: nil)
@@ -53,6 +56,7 @@ module PurlFetcher
     def delete(path:)
       response = connection.delete(path)
 
+      raise AlreadyDeletedResponseError, response.body if response.status == 409
       raise "unexpected response: #{response.status} #{response.body}" unless response.success?
 
       response.body

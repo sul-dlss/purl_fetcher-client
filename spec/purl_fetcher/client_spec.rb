@@ -43,19 +43,38 @@ RSpec.describe PurlFetcher::Client do
     end
 
     describe '#delete' do
+    context 'when successful' do
+        before do
+          stub_request(:delete, "http://127.0.0.1:3000/test").
+            with(
+              headers: {
+              'Accept'=>'application/json',
+              'Authorization'=>'Bearer abc123',
+              'Content-Type'=>'application/json'
+              }).
+            to_return(status: 200, body: 'OK')
+        end
+
+        it 'adds token to the request' do
+          expect(client.delete(path: '/test')).to eq('OK')
+        end
+      end
+    end
+
+    context 'when already deleted' do
       before do
         stub_request(:delete, "http://127.0.0.1:3000/test").
-           with(
-             headers: {
-             'Accept'=>'application/json',
-             'Authorization'=>'Bearer abc123',
-             'Content-Type'=>'application/json'
-             }).
-           to_return(status: 200, body: 'OK')
+          with(
+            headers: {
+            'Accept'=>'application/json',
+            'Authorization'=>'Bearer abc123',
+            'Content-Type'=>'application/json'
+            }).
+          to_return(status: 409, body: 'already deleted')
       end
 
       it 'adds token to the request' do
-        expect(client.delete(path: '/test')).to eq('OK')
+        expect { client.delete(path: '/test') }.to raise_error(PurlFetcher::Client::AlreadyDeletedResponseError, 'already deleted')
       end
     end
   end
