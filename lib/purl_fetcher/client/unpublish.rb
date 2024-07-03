@@ -5,6 +5,7 @@ module PurlFetcher
     # Delete an item from the purl-fetcher cache
     class Unpublish
       # @param [String] druid the identifier of the item
+      # @raise [Purl::Fetcher::Client::AlreadyDeletedResponseError] if the item is already deleted
       def self.unpublish(druid:)
         new(druid:).unpublish
       end
@@ -18,6 +19,7 @@ module PurlFetcher
         logger.debug("Starting a unpublish request for: #{druid}")
         response = client.delete(path:)
         logger.debug("Unpublish request complete")
+        response
       end
 
       private
