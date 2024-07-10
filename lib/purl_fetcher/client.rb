@@ -7,14 +7,10 @@ require "logger"
 require "purl_fetcher/client/version"
 require "purl_fetcher/client/reader"
 require "purl_fetcher/client/mods"
-require "purl_fetcher/client/upload_files"
-require "purl_fetcher/client/direct_upload_request"
-require "purl_fetcher/client/direct_upload_response"
 require "purl_fetcher/client/legacy_publish"
 require "purl_fetcher/client/publish"
 require "purl_fetcher/client/release_tags"
 require "purl_fetcher/client/unpublish"
-require "purl_fetcher/client/publish_shelve"
 
 module PurlFetcher
   class Client
