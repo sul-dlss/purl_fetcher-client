@@ -9,7 +9,7 @@ module PurlFetcher
       end
 
       # @param [Cocina::Models::DRO,Cocina::Models::Collection] cocina the Cocina data object
-      # @param [Hash<String,String>] file_uploads map of filenames to signed_ids
+      # @param [Hash<String,String>] file_uploads map of cocina filenames to staging filenames (UUIDs)
       def initialize(cocina:, file_uploads:)
         @cocina = cocina
         @file_uploads = file_uploads

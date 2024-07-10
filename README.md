@@ -20,28 +20,6 @@ Or install it yourself as:
 
     $ gem install purl_fetcher-client
 
-## Usage
-
-### Uploading a file
-
-```ruby
-PurlFetcher::Client.configure(url:'http://127.0.0.1:3000', token: 'abc123')
-
-PurlFetcher::Client::UploadFiles.upload(
-  file_metadata: {
-    'file1.txt' => PurlFetcher::Client::DirectUploadRequest.new(
-      checksum: '123',
-      byte_size: 10_000,
-      content_type: 'image/tiff',
-      filename: 'image.tiff'
-    )
-  },
-  filepath_map: {
-    'file1.txt' => File.expand_path('Gemfile.lock')
-  }
-)
-```
-
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
