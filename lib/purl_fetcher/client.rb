@@ -116,7 +116,7 @@ module PurlFetcher
       # To allow transfer of large files.
       {
           read_timeout: 900,
-          timeout: 900
+          timeout: 36000
         }
     end
 
