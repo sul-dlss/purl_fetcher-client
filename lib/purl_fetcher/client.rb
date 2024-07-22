@@ -49,8 +49,9 @@ module PurlFetcher
 
     # Send an DELETE request
     # @param path [String] the path for the API request
-    def delete(path:)
-      response = connection.delete(path)
+    # @param params [Hash] the query parameters for the DELETE request
+    def delete(path:, params: {})
+      response = connection.delete(path, params)
 
       raise AlreadyDeletedResponseError, response.body if response.status == 409
       raise "unexpected response: #{response.status} #{response.body}" unless response.success?

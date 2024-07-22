@@ -11,14 +11,14 @@ RSpec.describe PurlFetcher::Client::Unpublish do
     end
 
     it 'invokes #unpublish on a new instance' do
-      described_class.unpublish(druid:)
+      described_class.unpublish(druid:, version: '2')
       expect(fake_instance).to have_received(:unpublish).once
     end
   end
 
   describe '#unpublish' do
     subject(:unpublish) do
-      described_class.new(druid:).unpublish
+      described_class.new(druid:, version: '2').unpublish
     end
 
     before do
@@ -30,7 +30,7 @@ RSpec.describe PurlFetcher::Client::Unpublish do
 
     it 'DELETE to the unpublish endpoint' do
       unpublish
-      expect(PurlFetcher::Client.instance).to have_received(:delete).with(path: "/purls/druid:bx911tp9024")
+      expect(PurlFetcher::Client.instance).to have_received(:delete).with(path: "/purls/druid:bx911tp9024", params: { version: "2" })
     end
   end
 end

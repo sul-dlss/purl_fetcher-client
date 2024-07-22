@@ -19,8 +19,10 @@ RSpec.describe PurlFetcher::Client::Publish do
 
   describe '#publish' do
     subject(:publish) do
-      described_class.new(cocina:, file_uploads:).publish
+      described_class.new(cocina:, file_uploads:, version: '1', version_date:, must_version: false).publish
     end
+
+    let(:version_date) { DateTime.iso8601('2021-09-01T00:00:00Z') }
 
     before do
       PurlFetcher::Client.configure(
@@ -32,7 +34,7 @@ RSpec.describe PurlFetcher::Client::Publish do
     it 'POST provided metadata to the publish endpoint' do
       publish
       expect(PurlFetcher::Client.instance).to have_received(:post).with(
-         body: "{\"object\":{},\"file_uploads\":{\"file2.txt\":\"8eadd935-6764-45f5-8a22-8cae5974bbb0\"}}",
+         body: "{\"object\":{},\"file_uploads\":{\"file2.txt\":\"8eadd935-6764-45f5-8a22-8cae5974bbb0\"},\"version\":\"1\",\"version_date\":\"2021-09-01T00:00:00+00:00\",\"must_version\":false}",
          path: "/v1/resources")
     end
   end

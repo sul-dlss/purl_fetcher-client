@@ -45,7 +45,7 @@ RSpec.describe PurlFetcher::Client do
     describe '#delete' do
     context 'when successful' do
         before do
-          stub_request(:delete, "http://127.0.0.1:3000/test").
+          stub_request(:delete, "http://127.0.0.1:3000/test?version=2").
             with(
               headers: {
               'Accept'=>'application/json',
@@ -56,7 +56,7 @@ RSpec.describe PurlFetcher::Client do
         end
 
         it 'adds token to the request' do
-          expect(client.delete(path: '/test')).to eq('OK')
+          expect(client.delete(path: '/test', params: { version: '2' })).to eq('OK')
         end
       end
     end
