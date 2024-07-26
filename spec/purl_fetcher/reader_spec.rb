@@ -27,7 +27,7 @@ RSpec.describe PurlFetcher::Client::Reader do
 
   describe '#files_by_digest' do
     before do
-      stub_request(:get, "https://purl-fetcher.stanford.edu/purls/druid:xyz").
+      stub_request(:get, "https://purl-fetcher.stanford.edu/v1/purls/druid:xyz").
         to_return(status: 200, body: body.to_json, headers: { 'content-type' => 'application/json' })
     end
 
@@ -63,7 +63,7 @@ RSpec.describe PurlFetcher::Client::Reader do
 
     context 'when not found' do
       before do
-        stub_request(:get, "https://purl-fetcher.stanford.edu/purls/druid:xyz").
+        stub_request(:get, "https://purl-fetcher.stanford.edu/v1/purls/druid:xyz").
           to_return(status: 404)
       end
 

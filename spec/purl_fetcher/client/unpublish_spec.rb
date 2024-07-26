@@ -30,7 +30,7 @@ RSpec.describe PurlFetcher::Client::Unpublish do
 
     it 'DELETE to the unpublish endpoint' do
       unpublish
-      expect(PurlFetcher::Client.instance).to have_received(:delete).with(path: "/purls/druid:bx911tp9024", params: { version: "2" })
+      expect(PurlFetcher::Client.instance).to have_received(:delete).with(path: "/v1/purls/druid:bx911tp9024", params: { version: "2" })
     end
   end
 end

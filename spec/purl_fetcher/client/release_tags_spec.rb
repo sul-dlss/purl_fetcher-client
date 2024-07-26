@@ -38,7 +38,7 @@ RSpec.describe PurlFetcher::Client::ReleaseTags do
       release
       expect(PurlFetcher::Client.instance).to have_received(:put).with(
          body: '{"actions":{"index":["Searchworks","Earthworks"],"delete":["PURL sitemap"]}}',
-         path: "/v1/released/druid:bx911tp9024")
+         path: "/v1/purls/druid:bx911tp9024/release_tags")
     end
   end
 end
