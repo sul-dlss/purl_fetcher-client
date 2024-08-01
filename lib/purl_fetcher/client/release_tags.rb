@@ -43,7 +43,7 @@ module PurlFetcher
       end
 
       def path
-        "/v1/released/#{druid}"
+        "/v1/purls/#{druid}/release_tags"
       end
     end
   end

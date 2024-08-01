@@ -54,7 +54,7 @@ module PurlFetcher
       end
 
       def path
-        "/v1/resources"
+        "/v1/purls/#{druid}"
       end
     end
   end

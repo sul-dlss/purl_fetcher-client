@@ -25,7 +25,7 @@ class PurlFetcher::Client::Reader
   # @raise [PurlFetcher::Client::NotFoundResponseError] if item is not found
   # @raise [PurlFetcher::Client::ResponseError] if the response is not successful
   def files_by_digest(druid)
-    retrieve_json("/purls/druid:#{druid.delete_prefix('druid:')}", {})
+    retrieve_json("/v1/purls/druid:#{druid.delete_prefix('druid:')}", {})
       .fetch("files_by_md5", [])
   end
 
