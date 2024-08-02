@@ -76,9 +76,9 @@ module PurlFetcher
     # @param path [String] the path for the API request
     # @param body [String] the body of the POST request
     # @param headers [Hash] extra headers to add to the SDR API request
-    def put(path:, body:, headers: {})
+    def put(path:, body: nil, headers: {})
       response = connection.put(path) do |request|
-        request.body = body
+        request.body = body if body
         request.headers = default_headers.merge(headers)
       end
 
