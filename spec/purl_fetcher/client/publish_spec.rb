@@ -28,12 +28,12 @@ RSpec.describe PurlFetcher::Client::Publish do
       PurlFetcher::Client.configure(
         url: 'https://purl-fetcher.example.edu'
       )
-      allow(PurlFetcher::Client.instance).to receive_messages(post: {})
+      allow(PurlFetcher::Client.instance).to receive_messages(put: {})
     end
 
     it 'POST provided metadata to the publish endpoint' do
       publish
-      expect(PurlFetcher::Client.instance).to have_received(:post).with(
+      expect(PurlFetcher::Client.instance).to have_received(:put).with(
          body: "{\"object\":{},\"file_uploads\":{\"file2.txt\":\"8eadd935-6764-45f5-8a22-8cae5974bbb0\"},\"version\":\"1\",\"version_date\":\"2021-09-01T00:00:00+00:00\",\"must_version\":false}",
          path: "/v1/purls/druid:bx911tp9024")
     end

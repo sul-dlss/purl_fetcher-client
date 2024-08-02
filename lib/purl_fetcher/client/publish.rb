@@ -23,7 +23,7 @@ module PurlFetcher
 
       def publish
         logger.debug("Starting a publish request for: #{druid}")
-        client.post(path:, body:)
+        client.put(path:, body:)
         logger.debug("Publish request complete")
       end
 
