@@ -112,9 +112,9 @@ module PurlFetcher
     def default_request_options
       # To allow transfer of large files.
       {
-          read_timeout: 1800, # 30 minutes for first response byte to be received
-          timeout: 36000
-        }
+        read_timeout: 36000,
+        timeout: 36000
+      }
     end
 
     def auth_header
