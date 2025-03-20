@@ -11,14 +11,13 @@ class PurlFetcher::Client::Reader
     @range = {}
   end
 
+  # @return [Hash] a hash including member item's druid and release targets
   # @raise [PurlFetcher::Client::NotFoundResponseError] if item is not found
   # @raise [PurlFetcher::Client::ResponseError] if the response is not successful
   def collection_members(druid)
     return to_enum(:collection_members, druid) unless block_given?
 
-    paginated_get("/collections/druid:#{druid.delete_prefix('druid:')}/purls", "purls").each do |obj, _meta|
-      yield obj["druid"].delete_prefix("druid:")
-    end
+    paginated_get("/collections/druid:#{druid.delete_prefix('druid:')}/purls", "purls").each { |member| yield member }
   end
 
   # @return [Array<Hash<String,String>>] a list of hashes where the key is a digest and the value is a filepath/filename
