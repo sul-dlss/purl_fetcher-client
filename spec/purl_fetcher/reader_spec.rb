@@ -5,7 +5,7 @@ RSpec.describe PurlFetcher::Client::Reader do
 
   describe '#collection_members' do
     before do
-      stub_request(:get, "https://purl-fetcher.stanford.edu/collections/druid:xyz/purls?params%5Bpage%5D=1&params%5Bper_page%5D=1000").
+      stub_request(:get, "https://purl-fetcher.stanford.edu/collections/druid:xyz/purls?page=1&per_page=1000").
         to_return(status: 200, body:, headers: { 'content-type' => 'application/json' })
     end
 
