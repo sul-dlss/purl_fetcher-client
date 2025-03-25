@@ -33,7 +33,7 @@ class PurlFetcher::Client::Reader
   ##
   # @return [Hash] a parsed JSON hash
   def retrieve_json(path, params)
-    response = conn.get(path, params: params)
+    response = conn.get(path, params)
 
     unless response.success?
       raise PurlFetcher::Client::NotFoundResponseError, "Item not found" if response.status == 404
