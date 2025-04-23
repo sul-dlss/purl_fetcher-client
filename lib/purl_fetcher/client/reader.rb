@@ -20,6 +20,13 @@ class PurlFetcher::Client::Reader
     paginated_get("/collections/druid:#{druid.delete_prefix('druid:')}/purls", "purls").each { |member| yield member }
   end
 
+  # @return [Hash] a hash including the item's druid and its last updated time
+  def released_to(target)
+    return to_enum(:released_to, ERB::Util.url_encode(target)) unless block_given?
+
+    retrieve_json("/released/#{target}").each { |item| yield item }
+  end
+
   # @return [Array<Hash<String,String>>] a list of hashes where the key is a digest and the value is a filepath/filename
   # @raise [PurlFetcher::Client::NotFoundResponseError] if item is not found
   # @raise [PurlFetcher::Client::ResponseError] if the response is not successful
@@ -32,7 +39,7 @@ class PurlFetcher::Client::Reader
 
   ##
   # @return [Hash] a parsed JSON hash
-  def retrieve_json(path, params)
+  def retrieve_json(path, params = {})
     response = conn.get(path, params)
 
     unless response.success?
