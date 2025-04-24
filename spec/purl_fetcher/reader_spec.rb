@@ -29,6 +29,27 @@ RSpec.describe PurlFetcher::Client::Reader do
     end
   end
 
+  describe '#released_to' do
+    before do
+      stub_request(:get, "https://purl-fetcher.stanford.edu/released/Searchworks").
+        to_return(status: 200, body:, headers: { 'content-type' => 'application/json' })
+    end
+
+    let(:body) do
+      [
+        { druid: 'druid:abc123', last_updated: '2023-10-01T12:00:00Z' },
+        { druid: 'druid:def456', last_updated: '2023-10-02T12:00:00Z' }
+      ].to_json
+    end
+
+    it 'returns items released to the target' do
+      expect(reader.released_to('Searchworks').to_a).to eq [
+        { 'druid' => 'druid:abc123', 'last_updated' => '2023-10-01T12:00:00Z' },
+        { 'druid' => 'druid:def456', 'last_updated' => '2023-10-02T12:00:00Z' }
+      ]
+    end
+  end
+
   describe '#files_by_digest' do
     before do
       stub_request(:get, "https://purl-fetcher.stanford.edu/v1/purls/druid:xyz").
