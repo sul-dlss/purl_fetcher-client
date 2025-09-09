@@ -12,13 +12,15 @@ module PurlFetcher
       # @param [Hash<String,String>] file_uploads map of cocina filenames to staging filenames (UUIDs)
       # @param [String] version the version of the item
       # @param [DateTime] version_date the version date
-      # @param [Boolean] must_version whether the item must be versioned
-      def initialize(cocina:, file_uploads:, version:, version_date:, must_version:)
+      # @param [Boolean] must_version whether the item must be versioned (deprecated)
+      def initialize(cocina:, file_uploads:, version:, version_date:, must_version: nil)
         @cocina = cocina
         @file_uploads = file_uploads
         @version = version
         @version_date = version_date
-        @must_version = must_version
+        unless must_version.nil?
+          warn "The must_version argument passed to PurlFetcher::Client::Publish is deprecated and will be removed in a future release"
+        end
       end
 
       def publish
@@ -29,7 +31,7 @@ module PurlFetcher
 
       private
 
-      attr_reader :cocina, :file_uploads, :version, :version_date, :must_version
+      attr_reader :cocina, :file_uploads, :version, :version_date
 
       def druid
         cocina.externalIdentifier
@@ -40,8 +42,7 @@ module PurlFetcher
           object: cocina.to_h,
           file_uploads: file_uploads,
           version: version,
-          version_date: version_date.iso8601,
-          must_version: must_version
+          version_date: version_date.iso8601
       }.to_json
       end
 
