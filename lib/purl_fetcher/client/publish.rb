@@ -13,23 +13,25 @@ module PurlFetcher
       # @param [String] version the version of the item
       # @param [DateTime] version_date the version date
       # @param [Boolean] must_version whether the item must be versioned
-      def initialize(cocina:, file_uploads:, version:, version_date:, must_version:)
+      # @param [Boolean] retriable whether to retry on failure
+      def initialize(cocina:, file_uploads:, version:, version_date:, must_version:, retriable: true)
         @cocina = cocina
         @file_uploads = file_uploads
         @version = version
         @version_date = version_date
         @must_version = must_version
+        @retriable = retriable
       end
 
       def publish
         logger.debug("Starting a publish request for: #{druid}")
-        client.put(path:, body:)
+        client.put(path:, body:, retriable:)
         logger.debug("Publish request complete")
       end
 
       private
 
-      attr_reader :cocina, :file_uploads, :version, :version_date, :must_version
+      attr_reader :cocina, :file_uploads, :version, :version_date, :must_version, :retriable
 
       def druid
         cocina.externalIdentifier

@@ -76,8 +76,9 @@ module PurlFetcher
     # @param path [String] the path for the API request
     # @param body [String] the body of the POST request
     # @param headers [Hash] extra headers to add to the SDR API request
-    def put(path:, body: nil, headers: {})
-      response = connection.put(path) do |request|
+    # @param retriable [Boolean] whether to retry on failure
+    def put(path:, body: nil, headers: {}, retriable: false)
+      response = connection(retriable:).put(path) do |request|
         request.body = body if body
         request.headers = default_headers.merge(headers)
       end
@@ -91,12 +92,23 @@ module PurlFetcher
 
     Config = Data.define(:url, :logger, :token)
 
-    def connection
+    def connection(retriable: false)
       Faraday.new(
         url: config.url,
         headers: default_headers,
         request: default_request_options
       ) do |conn|
+        if retriable
+          conn.request :retry,
+                       max: 3,
+                       interval: 15,
+                       backoff_factor: 2,
+                       exceptions: Faraday::Retry::Middleware::DEFAULT_EXCEPTIONS,
+                       retry_statuses: [ 500 ],
+                       retry_block: lambda { |env, _options, retries_remaining, exception|
+                         config.logger.warn("Retrying request to #{env.url} (#{retries_remaining} retries remaining): #{exception&.message}")
+                       }
+        end
         conn.response :json
       end
     end
