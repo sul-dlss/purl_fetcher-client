@@ -105,8 +105,8 @@ module PurlFetcher
                        backoff_factor: 2,
                        exceptions: Faraday::Retry::Middleware::DEFAULT_EXCEPTIONS,
                        retry_statuses: [ 500 ],
-                       retry_block: lambda { |env, _options, retries_remaining, exception|
-                         config.logger.warn("Retrying request to #{env.url} (#{retries_remaining} retries remaining): #{exception&.message}")
+                       retry_block: lambda { |env:, retry_count:, exception:, **|
+                         config.logger.warn("Retrying request to #{env.url} (#{retry_count} retries): #{exception&.message}")
                        }
         end
         conn.response :json
