@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport'
   spec.add_dependency 'faraday', '~> 2.1'
+  spec.add_dependency 'faraday-retry', '~> 2.4'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'debug'
